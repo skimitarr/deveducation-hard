@@ -1,13 +1,33 @@
-// import { call } from 'redux-saga/effects';
+import { put, takeEvery } from 'redux-saga/effects';
+import { setUser, removeUser } from '../store/QuizSlice';
 
-// import { userReducer, chatReducer, quizReducer } from './QuizSlice'
+export function setUserAction(email: string) {
+  return {
+    type: 'saga/setUser',
+    payload: email,
+  };
+}
 
-// const sagasList = [
-//   chatSaga,
-//   quizManagerUserSaga,
-//   localStorageManagerSaga,
-//   firebaseAuthSagaWatcher,
-// ];
-export function* watchRootSaga() {
-  // yield all (sagasList.map ((saga) => call (saga)))
+export function* setUserSaga() {
+  yield takeEvery('saga/setUser', workSetUser);
+}
+
+function* workSetUser({ payload }: { type: string; payload: string }) {
+  yield put(setUser(payload));
+  localStorage.setItem('email', payload);
+}
+
+export function removeUserAction() {
+  return {
+    type: 'saga/removeUser',
+  };
+}
+
+export function* removeUserSaga() {
+  yield takeEvery('saga/removeUser', workRemoveUser);
+}
+
+function* workRemoveUser() {
+  yield put(removeUser());
+  localStorage.removeItem('email');
 }

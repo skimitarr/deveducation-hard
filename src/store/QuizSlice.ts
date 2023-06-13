@@ -3,13 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 const quizSlice = createSlice({
   name: 'quiz',
   initialState: {
-    userState: [],
+    userEmail: null,
     chatState: [],
     quizState: [],
   } as any,
   reducers: {
-    userReducer(state, action) {
-      state.userState = action.payload;
+    setUser(state, action) {
+      state.userEmail = action.payload;
+    },
+    removeUser(state) {
+      state.userEmail = null;
     },
     chatReducer(state, action) {
       state.chatState = action.payload;
@@ -20,5 +23,5 @@ const quizSlice = createSlice({
   },
 });
 
-export const { userReducer, chatReducer, quizReducer } = quizSlice.actions;
+export const { setUser, removeUser, chatReducer, quizReducer } = quizSlice.actions;
 export default quizSlice.reducer;
