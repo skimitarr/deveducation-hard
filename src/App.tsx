@@ -1,5 +1,6 @@
-import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import './css/App.css';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 import Header from './components/Header';
 import Login from './pages/LoginPage';
@@ -7,6 +8,14 @@ import Main from './pages/MainPage';
 import NotFound from './pages/NotFound';
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.user) {
+      navigate('/main');
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path='/' element={<Header />}>

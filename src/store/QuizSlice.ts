@@ -1,27 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { IQuizSliceState } from '../components/Interfaces';
+
 const quizSlice = createSlice({
   name: 'quiz',
   initialState: {
-    userEmail: null,
-    chatState: [],
-    quizState: [],
-  } as any,
+    userData: null,
+    messages: null,
+  } as IQuizSliceState,
   reducers: {
     setUser(state, action) {
-      state.userEmail = action.payload;
+      state.userData = action.payload;
     },
     removeUser(state) {
-      state.userEmail = null;
+      state.userData = null;
     },
-    chatReducer(state, action) {
-      state.chatState = action.payload;
+    getMessages(state, action) {
+      state.messages = action.payload;
     },
-    quizReducer(state, action) {
-      state.quizState = action.payload;
-    },
+    // quizReducer(state, action) {
+    //   state.quizState = action.payload;
+    // },
   },
 });
 
-export const { setUser, removeUser, chatReducer, quizReducer } = quizSlice.actions;
+export const { setUser, removeUser, getMessages } = quizSlice.actions;
 export default quizSlice.reducer;

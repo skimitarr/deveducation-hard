@@ -1,0 +1,100 @@
+@import 'reset.css';
+.flex {
+  display: flex;
+}
+
+.btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 10px;
+  background-color: rgb(4, 109, 141);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+.btn:hover {
+  transform: scale(1.1);
+}
+
+.header__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  background-color: #301f74;
+}
+.header__img {
+  width: 100px;
+  height: 100px;
+  transition: transform 0.3s ease-in-out;
+}
+.header__img:hover {
+  transform: scale(1.25);
+}
+.header__btn {
+  margin-right: 25px;
+}
+
+.main {
+  height: calc(100vh - 100px);
+}
+.main__container {
+  margin: 0 25px;
+  padding: 25px 0;
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  grid-gap: 30px;
+}
+
+.login__container {
+  align-items: center;
+  justify-content: center;
+}
+.login__btn {
+  transition: transform 0.3s ease-in-out;
+}
+.login__btn:hover {
+  transform: scale(1.05);
+}
+
+.chat {
+  flex-direction: column;
+  font-size: 20px;
+}
+.chat__list {
+  max-height: calc(100vh - 100px - 240px);
+  overflow: auto;
+}
+.chat__item {
+  margin-bottom: 30px;
+}
+.chat__photo {
+  margin-bottom: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+}
+.chat__name {
+  margin-bottom: 10px;
+  border-bottom: 1px solid black;
+  font-size: 14px;
+}
+.chat__text {
+  margin-bottom: 20px;
+  padding: 0 10px 0 0;
+}
+.chat__time {
+  padding: 0 10px 0 0;
+  font-size: 10px;
+  text-align: right;
+}
+.chat__message {
+  margin-top: 20px;
+}
+.chat__textearea {
+  margin-bottom: 10px;
+  font-size: 16px;
+  resize: none;
+}/*# sourceMappingURL=App.css.map */

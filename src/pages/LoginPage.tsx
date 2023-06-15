@@ -1,38 +1,40 @@
-import { auth, provider } from '../firebase';
-import { signInWithPopup } from 'firebase/auth';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { signInWithPopup } from 'firebase/auth';
+import GoogleButton from 'react-google-button';
 
+import { auth, provider } from '../firebase';
 import { setUserAction } from '../sagas/sagas';
 
-interface User extends Record<string, any> {}
+import { User } from '../components/Interfaces';
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isUserStore = useSelector((state: User) => state.quiz.userEmail);
+  const isUserStore = useSelector((state: User) => state.quiz.userData);
+  console.log(isUserStore);
 
   const login = () => {
     signInWithPopup(auth, provider)
-      .then(({ user }: any) => {
+      .then(({ user }: User) => {
         if (user) {
           console.log(user);
-          dispatch(setUserAction(user.email));
+          dispatch(
+            setUserAction({
+              uid: user.uid,
+              displayName: user.displayName,
+              photoUrl: user.photoURL,
+            })
+          );
           navigate('/main');
         }
       })
       .catch(console.error);
   };
-  useEffect(() => {
-    if (isUserStore) {
-      navigate('/main');
-    }
-  }, [isUserStore, navigate]);
 
   return (
-    <main className='main form__container'>
-      <button onClick={() => login()}>Log in with Google</button>
+    <main className='main login__container flex'>
+      <GoogleButton onClick={() => login()} className='login__btn' />
     </main>
   );
 };
