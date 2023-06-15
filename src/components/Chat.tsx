@@ -11,7 +11,7 @@ const Chat = () => {
   const dispatch = useDispatch();
   const dataUserStore = useSelector((state: IState) => state.quiz.userData);
   const dataMessagesStore = useSelector((state: IState) => state.quiz.messages);
-  console.log(dataMessagesStore);
+  // console.log(dataMessagesStore);
   const now = moment().format('YYYY-MM-DD kk:mm:ss');
 
   useEffect(() => {

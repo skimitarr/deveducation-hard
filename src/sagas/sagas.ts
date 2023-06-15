@@ -1,7 +1,7 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { collection, addDoc, onSnapshot, query, DocumentData } from 'firebase/firestore';
 
-import { setUser, removeUser, getMessages } from '../store/QuizSlice';
+import { setUser, removeUser, getMessages, isUserForQuiz } from '../store/QuizSlice';
 import { db } from '../firebase';
 import { ISetUser, IMessages } from '../components/Interfaces';
 
@@ -95,4 +95,46 @@ export function* getMessagesSaga() {
 function* workGetMessages(): Generator<any, void, IMessages[]> {
   const item: IMessages[] = yield call(() => watchApiMessages());
   yield put(getMessages(item));
+}
+
+// ---------------------------------------------------
+// const SetUserApiToStartQuiz = async (data: any) => {
+//   // отправка объекта с установкой автоматического id
+//   await addDoc(collection(db, 'messages'), {
+//     uid: data.uid,
+//     displayName: data.displayName,
+//     photoUrl: data.photoUrl,
+//     text: data.text,
+//     createdAt: data.createdAt,
+//   });
+// };
+
+// export function setUserToStartQuizAction() {
+//   return {
+//     type: 'saga/setUserToStartQuiz',
+//   };
+// }
+
+// export function* setUserToStartQuizSaga() {
+//   yield takeEvery('saga/setUserToStartQuiz', workSetUserToStartQuiz);
+// }
+
+// function* workSetUserToStartQuiz({ payload }: any): Generator<any, void, any> {
+//   const item: any = yield call(SetUserApiToStartQuiz, payload);
+//   yield put(isUserForQuiz(item));
+// }
+
+export function isUserToStartQuizAction(readyForQuiz: boolean) {
+  return {
+    type: 'saga/isUserToStartQuiz',
+    payload: readyForQuiz,
+  };
+}
+
+export function* isUserToStartQuizSaga() {
+  yield takeEvery('saga/isUserToStartQuiz', workISUserToStartQuiz);
+}
+
+function* workISUserToStartQuiz({ payload }: { type: string; payload: boolean }) {
+  yield put(isUserForQuiz(payload));
 }

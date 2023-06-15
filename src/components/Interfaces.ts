@@ -62,6 +62,7 @@ export interface User extends Record<string, any> {}
 export type IQuizSliceState = {
   userData: ISetUser | null;
   messages: IMessages | null;
+  isUserReadyToStartQuiz: boolean;
 };
 
 export type IState = {

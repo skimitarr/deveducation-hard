@@ -1,7 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 
-import { setUserSaga, removeUserSaga, sendMessageSaga, getMessagesSaga } from '../sagas/sagas';
+import {
+  setUserSaga,
+  removeUserSaga,
+  sendMessageSaga,
+  getMessagesSaga,
+  isUserToStartQuizSaga,
+} from '../sagas/sagas';
 import quizSlice from './QuizSlice';
 
 const saga = createSagaMiddleware();
@@ -17,5 +23,6 @@ saga.run(setUserSaga);
 saga.run(removeUserSaga);
 saga.run(sendMessageSaga);
 saga.run(getMessagesSaga);
+saga.run(isUserToStartQuizSaga);
 
 export default store;

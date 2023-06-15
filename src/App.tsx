@@ -14,7 +14,7 @@ function App() {
     if (localStorage.user) {
       navigate('/main');
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <Routes>
