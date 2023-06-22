@@ -11,8 +11,8 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.user) {
-      navigate('/main');
+    if (!localStorage.user) {
+      navigate('/');
     }
   }, [navigate]);
 

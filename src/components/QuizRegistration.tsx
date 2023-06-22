@@ -1,38 +1,35 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { collection, onSnapshot } from 'firebase/firestore';
 
-import { isUserToStartQuizAction } from '../sagas/sagas';
+// import AddQuiz from '../components/AddQuiz';
+import { db } from '../firebase';
+import { getQuizesAction } from '../sagas/sagas';
+import QuizCard from '../components/QuizCard';
+import { IState, IQuiz, QuizRegistrationProps } from '../components/Interfaces';
 
-const QuizRegistration = () => {
-  const [readyForQuiz, setReadyForQuiz] = useState(false);
+const QuizRegistration = ({ getCurrentQuizId }: QuizRegistrationProps) => {
   const dispatch = useDispatch();
+  const quizesApi = useSelector((state: IState) => state.quiz.quizes);
 
-  const startQuiz = () => {
-    dispatch(isUserToStartQuizAction(true));
-  };
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'quizes'), () => {
+      dispatch(getQuizesAction());
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch]);
 
   return (
     <div className='quiz flex'>
-      {readyForQuiz ? (
-        <div className='quiz__wraper flex'>
-          <button onClick={() => startQuiz()} className='btn quiz__btn quiz__btn-start'>
-            Start
-          </button>
-          <button
-            onClick={() => setReadyForQuiz(!readyForQuiz)}
-            className='btn quiz__btn quiz__btn-cancel'
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div className='quiz__wraper flex'>
-          <h1 className='quiz__title'>Are you ready for quiz?</h1>
-          <button onClick={() => setReadyForQuiz(!readyForQuiz)} className='btn'>
-            Ready
-          </button>
-        </div>
-      )}
+      {/* <AddQuiz /> */}
+      <div className='quiz__wraper flex'>
+        {quizesApi &&
+          quizesApi.map((quiz: IQuiz) => {
+            return <QuizCard key={quiz.id} quiz={quiz} getCurrentQuizId={getCurrentQuizId} />;
+          })}
+      </div>
     </div>
   );
 };

@@ -1,18 +1,22 @@
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import GoogleButton from 'react-google-button';
 
 import { auth, provider } from '../firebase';
 import { setUserAction } from '../sagas/sagas';
-
 import { User } from '../components/Interfaces';
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isUserStore = useSelector((state: User) => state.quiz.userData);
-  console.log(isUserStore);
+
+  useEffect(() => {
+    if (localStorage.user) {
+      navigate('/main');
+    }
+  }, [navigate]);
 
   const login = () => {
     signInWithPopup(auth, provider)
@@ -21,9 +25,9 @@ const Login = () => {
           console.log(user);
           dispatch(
             setUserAction({
-              uid: user.uid,
               displayName: user.displayName,
               photoUrl: user.photoURL,
+              idUser: user.uid,
             })
           );
           navigate('/main');

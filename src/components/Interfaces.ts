@@ -1,87 +1,79 @@
-// export type IStateFromStore = {
-//   accountsRooms: {
-//     allAccounts: Record<string, IAccount>;
-//     allRooms: IRoom[];
-//   };
-// };
-
-// export type IItem = {
-//   Accounts: IAccount;
-//   Rooms: IRoom[];
-// };
-
-// export type IAccount = {
-//   image: string;
-//   password: string;
-// };
-
-// type IAccounts = Record<string, IAccount>;
-
-// export type IRoom = {
-//   checkInDate: string | null;
-//   description: string;
-//   features: string[];
-//   gallery: string[];
-//   guest: string;
-//   id: string;
-//   isCheckedIn: boolean;
-//   number: number;
-//   occupancy: number;
-//   price: number;
-//   type: string;
-// };
-
-// export type IAccountsRoomsSliceState = {
-//   allAccounts: IAccounts;
-//   allRooms: IRoom[];
-// };
-
-// export type IFormValues = {
-//   username: string;
-//   password: string;
-//   remember: boolean;
-// };
-
-// export type TableColoumns = {
-//   key: string;
-//   number: number;
-//   type: string;
-//   occupancy: number;
-//   price: number;
-//   guest: string;
-//   link: string;
-// };
-
-// export type FilterTable = {
-//   text: string | number;
-//   value: string | number;
-// };
-
 export interface User extends Record<string, any> {}
 
 export type IQuizSliceState = {
-  userData: ISetUser | null;
+  userData: IUser | null;
   messages: IMessages | null;
-  isUserReadyToStartQuiz: boolean;
+  setUserReadyToStartQuiz: {
+    idParent: string;
+    displayName: string;
+    idUser: string;
+  } | null;
+  quizes: any | null;
 };
 
 export type IState = {
   quiz: {
-    userData: ISetUser;
+    userData: IUser;
     messages: IMessages[];
+    quizes: IQuiz[];
   };
 };
 
-export type ISetUser = {
-  uid: string;
+export type IUser = {
+  idParent?: string;
+  score?: number | undefined;
   displayName: string;
   photoUrl: string;
+  idUser: string;
 };
 
 export type IMessages = {
-  uid: string;
+  // idParent: string;
+  idUser: string;
   displayName: string;
   photoUrl: string;
   text: string;
   createdAt: string;
+};
+
+export type IQuiz = {
+  category: string;
+  difficulty: string;
+  id: string;
+  questions: string[];
+  answers: {
+    [key: number]: {
+      [key: number]: string;
+      correct_answer: string;
+    };
+  };
+  status: string;
+  users: IUser[];
+};
+
+export interface QuizRegistrationProps {
+  getCurrentQuizId: (currentQuizId: string) => void;
+}
+
+export interface QuizCardProps extends QuizRegistrationProps {
+  quiz: IQuiz;
+}
+
+export interface QuizProps {
+  id: string;
+  setIsQuiz: (setIsQuiz: boolean) => void;
+}
+
+export type Answer = {
+  [key: number]: string;
+  correct_answer?: string;
+};
+
+export type QuizQuestion = {
+  category: string;
+  type: string;
+  difficulty: string;
+  question: string;
+  correct_answer: string;
+  incorrect_answers: string[];
 };

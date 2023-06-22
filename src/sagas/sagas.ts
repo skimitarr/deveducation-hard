@@ -1,11 +1,21 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { collection, addDoc, onSnapshot, query, DocumentData } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  DocumentData,
+  doc,
+  updateDoc,
+  getDoc,
+} from 'firebase/firestore';
 
-import { setUser, removeUser, getMessages, isUserForQuiz } from '../store/QuizSlice';
+import { setUser, removeUser, getMessages, getQuizes } from '../store/QuizSlice';
 import { db } from '../firebase';
-import { ISetUser, IMessages } from '../components/Interfaces';
+import { IUser, IMessages } from '../components/Interfaces';
 
-export function setUserAction(data: ISetUser) {
+// ---------------------------------------------------
+export function setUserAction(data: IUser) {
   return {
     type: 'saga/setUser',
     payload: data,
@@ -21,6 +31,7 @@ function* workSetUser({ payload }: { type: string; payload: string }) {
   localStorage.setItem('user', JSON.stringify(payload));
 }
 
+// ---------------------------------------------------
 export function removeUserAction() {
   return {
     type: 'saga/removeUser',
@@ -40,7 +51,7 @@ function* workRemoveUser() {
 const sendApiMessage = async (data: IMessages) => {
   // отправка объекта с установкой автоматического id
   await addDoc(collection(db, 'messages'), {
-    uid: data.uid,
+    idUser: data.idUser,
     displayName: data.displayName,
     photoUrl: data.photoUrl,
     text: data.text,
@@ -98,43 +109,106 @@ function* workGetMessages(): Generator<any, void, IMessages[]> {
 }
 
 // ---------------------------------------------------
-// const SetUserApiToStartQuiz = async (data: any) => {
-//   // отправка объекта с установкой автоматического id
-//   await addDoc(collection(db, 'messages'), {
-//     uid: data.uid,
-//     displayName: data.displayName,
-//     photoUrl: data.photoUrl,
-//     text: data.text,
-//     createdAt: data.createdAt,
-//   });
-// };
+export async function watchApiQuizes() {
+  const queryCollection = query(collection(db, 'quizes'));
+  type IArr = DocumentData[];
 
-// export function setUserToStartQuizAction() {
-//   return {
-//     type: 'saga/setUserToStartQuiz',
-//   };
-// }
+  const array = await new Promise((resolve) => {
+    const unsubscribe = onSnapshot(queryCollection, (data) => {
+      let tempArr: IArr = [];
+      data.forEach((i) => {
+        let addingId = i.data();
+        addingId.id = i.id;
+        tempArr.push(addingId);
+      });
+      resolve(tempArr);
+      return tempArr;
+    });
+    return () => unsubscribe();
+  });
+  return array;
+}
 
-// export function* setUserToStartQuizSaga() {
-//   yield takeEvery('saga/setUserToStartQuiz', workSetUserToStartQuiz);
-// }
-
-// function* workSetUserToStartQuiz({ payload }: any): Generator<any, void, any> {
-//   const item: any = yield call(SetUserApiToStartQuiz, payload);
-//   yield put(isUserForQuiz(item));
-// }
-
-export function isUserToStartQuizAction(readyForQuiz: boolean) {
+export function getQuizesAction() {
   return {
-    type: 'saga/isUserToStartQuiz',
-    payload: readyForQuiz,
+    type: 'saga/getQuizes',
   };
 }
 
-export function* isUserToStartQuizSaga() {
-  yield takeEvery('saga/isUserToStartQuiz', workISUserToStartQuiz);
+export function* getQuizesSaga() {
+  yield takeEvery('saga/getQuizes', workGetQuizes);
 }
 
-function* workISUserToStartQuiz({ payload }: { type: string; payload: boolean }) {
-  yield put(isUserForQuiz(payload));
+function* workGetQuizes() {
+  const item: IMessages[] = yield call(() => watchApiQuizes());
+  yield put(getQuizes(item));
+}
+
+// ---------------------------------------------------
+const updateUserDataThatJoinQuiz = async (data: any, flag: string) => {
+  const userData = doc(db, 'quizes', `${data.idParent}`);
+  const docSnapshot = await getDoc(userData);
+  if (docSnapshot.exists()) {
+    const existingUsers = docSnapshot.data().users;
+    let temp: any[] = [];
+    let updatedUsers = existingUsers.filter((user: any) => user.idUser === data.idUser);
+
+    if (updatedUsers.length === 0 && flag === 'addUser') {
+      const newUser = {
+        score: data.score,
+        displayName: data.displayName,
+        idParent: data.idParent,
+        idUser: data.idUser,
+      };
+      temp = [...existingUsers, newUser];
+    }
+
+    if (updatedUsers.length > 0) {
+      updatedUsers[0].score = data.score;
+      updatedUsers[0].displayName = data.displayName;
+      updatedUsers[0].idParent = data.idParent;
+      updatedUsers[0].idUser = data.idUser;
+      temp = existingUsers.map((user: any) =>
+        user.idUser === data.idUser ? updatedUsers[0] : user
+      );
+    }
+    await updateDoc(userData, { users: temp });
+  }
+};
+export function updateUserDataThatJoinQuizAction(readyForQuiz: any, flag: string) {
+  return {
+    type: 'saga/updateUserData',
+    payload: { readyForQuiz, flag },
+  };
+}
+
+export function* updateUserDataThatJoinQuizSaga() {
+  yield takeEvery('saga/updateUserData', workUpdateUserDataThatJoinQuiz);
+}
+
+function* workUpdateUserDataThatJoinQuiz({ payload }: { type: string; payload: any }) {
+  const { readyForQuiz, flag } = payload;
+  yield call(() => updateUserDataThatJoinQuiz(readyForQuiz, flag));
+}
+
+// ---------------------------------------------------
+const updateStatusQuiz = async (id: any, status: any) => {
+  const userData = doc(db, 'quizes', `${id}`);
+  await updateDoc(userData, { status: status });
+};
+
+export function updateStatusQuizAction(id: any, status: any) {
+  return {
+    type: 'saga/updateStatusQuiz',
+    payload: { id, status },
+  };
+}
+
+export function* updateStatusQuizSaga() {
+  yield takeEvery('saga/updateStatusQuiz', workUpdateStatusQuiz);
+}
+
+function* workUpdateStatusQuiz({ payload }: { type: string; payload: any }) {
+  const { id, status } = payload;
+  yield call(() => updateStatusQuiz(id, status));
 }

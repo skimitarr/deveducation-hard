@@ -7,7 +7,7 @@ const quizSlice = createSlice({
   initialState: {
     userData: null,
     messages: null,
-    isUserReadyToStartQuiz: false,
+    quizes: null,
   } as IQuizSliceState,
   reducers: {
     setUser(state, action) {
@@ -19,11 +19,11 @@ const quizSlice = createSlice({
     getMessages(state, action) {
       state.messages = action.payload;
     },
-    isUserForQuiz(state, action) {
-      state.isUserReadyToStartQuiz = action.payload;
+    getQuizes(state, action) {
+      state.quizes = action.payload;
     },
   },
 });
 
-export const { setUser, removeUser, getMessages, isUserForQuiz } = quizSlice.actions;
+export const { setUser, removeUser, getMessages, getQuizes } = quizSlice.actions;
 export default quizSlice.reducer;

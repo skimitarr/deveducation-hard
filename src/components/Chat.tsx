@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { collection, onSnapshot } from 'firebase/firestore';
 
+import { db } from '../firebase';
 import { sendMessageAction, getMessagesAction } from '../sagas/sagas';
 import { IState } from '../components/Interfaces';
 import ChatList from './ChatList';
@@ -11,14 +13,16 @@ const Chat = () => {
   const dispatch = useDispatch();
   const dataUserStore = useSelector((state: IState) => state.quiz.userData);
   const dataMessagesStore = useSelector((state: IState) => state.quiz.messages);
-  // console.log(dataMessagesStore);
   const now = moment().format('YYYY-MM-DD kk:mm:ss');
 
   useEffect(() => {
-    if (!dataMessagesStore) {
+    const unsubscribe = onSnapshot(collection(db, 'messages'), () => {
       dispatch(getMessagesAction());
-    }
-  }, [dispatch, dataMessagesStore]);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch]);
 
   const getInputText = (message: string) => {
     setText(message);
@@ -29,7 +33,7 @@ const Chat = () => {
     if (dataUserStore) {
       dispatch(
         sendMessageAction({
-          uid: dataUserStore.uid,
+          idUser: dataUserStore.idUser,
           displayName: dataUserStore.displayName,
           photoUrl: dataUserStore.photoUrl,
           text: text,
@@ -43,7 +47,7 @@ const Chat = () => {
         const userData = JSON.parse(localUser);
         dispatch(
           sendMessageAction({
-            uid: userData.uid,
+            idUser: userData.idUser,
             displayName: userData.displayName,
             photoUrl: userData.photoUrl,
             text: text,
