@@ -24,6 +24,7 @@ const QuizRegistration = ({ getCurrentQuizId }: QuizRegistrationProps) => {
   return (
     <div className='quiz flex'>
       {/* <AddQuiz /> */}
+      <h1 className='quiz__title'>You may choose the quiz to start</h1>
       <div className='quiz__wraper flex'>
         {quizesApi &&
           quizesApi.map((quiz: IQuiz) => {

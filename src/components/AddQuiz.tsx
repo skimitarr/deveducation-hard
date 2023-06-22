@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
+import { Answer, QuizQuestion, IQuiz } from '../components/Interfaces';
+
 const AddQuiz = () => {
   const [url, setUrl] = useState('');
-  const [datas, setDatas] = useState({});
+  const [datas, setDatas] = useState<IQuiz | {}>({});
 
-  function shuffle(arr: any) {
+  function shuffle(arr: string[]) {
     var j, temp;
     for (var i = arr.length - 1; i > 0; i--) {
       j = Math.floor(Math.random() * (i + 1));
@@ -21,11 +23,11 @@ const AddQuiz = () => {
     const response = await fetch(`${url}`);
     const data = await response.json();
 
-    let arrAnswers: any = [];
-    data.results.forEach((i: any) => {
+    let arrAnswers: Answer[] = [];
+    data.results.forEach((i: QuizQuestion) => {
       let temp = {};
-      let temparr: any = [];
-      i.incorrect_answers.forEach((element: any) => {
+      let temparr: string[] = [];
+      i.incorrect_answers.forEach((element) => {
         temparr.push(element);
       });
       temparr.push(i.correct_answer);
@@ -34,8 +36,8 @@ const AddQuiz = () => {
       arrAnswers.push(temp);
     });
 
-    const arrQuestions: any = [];
-    data.results.forEach((i: any) => {
+    const arrQuestions: string[] = [];
+    data.results.forEach((i: QuizQuestion) => {
       arrQuestions.push(i.question);
     });
 
@@ -53,17 +55,17 @@ const AddQuiz = () => {
     setDatas(obj);
   }
 
-  const sendQuizToApi = (data: any) => {
+  const sendQuizToApi = (data: IQuiz) => {
     addDoc(collection(db, 'quizes'), data);
   };
 
-  const inputUrl = (e: any) => {
+  const inputUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
   };
 
   useEffect(() => {
     if (Object.keys(datas).length > 0) {
-      sendQuizToApi(datas);
+      sendQuizToApi(datas as IQuiz);
     }
   }, [datas]);
 

@@ -53,23 +53,43 @@ const QuizCard = ({ quiz, getCurrentQuizId }: QuizCardProps) => {
   };
 
   return (
-    <div className='quiz__card flex'>
-      <p>Quiz category: {quiz.category}</p>
-      <p>Quiz difficulty: {quiz.difficulty}</p>
-      <p>Quiz status: {quiz.status}</p>
+    <div
+      className='quiz__card flex'
+      style={{
+        backgroundColor: quiz.status === 'pending' ? 'white' : 'rgba(199, 195, 195, 0.877)',
+      }}
+    >
+      <p className='quiz__subtitle'>
+        Quiz category: <span className='quiz__text quiz__category'>{quiz.category}</span>
+      </p>
+      <p className='quiz__subtitle'>
+        Quiz difficulty: <span className='quiz__text'>{quiz.difficulty}</span>
+      </p>
+      <p className='quiz__subtitle'>
+        Quiz status: <span className='quiz__text'>{quiz.status}</span>
+      </p>
 
       {quiz.status === 'finished' ? (
-        <div>The winner is {winner()?.displayName}</div>
+        <p className='quiz__subtitle'>
+          The winner is <span className='quiz__text'>{winner()?.displayName}</span>
+        </p>
       ) : quiz.status === 'started' ? (
-        <p>Is gaming now</p>
+        <p className='quiz__subtitle'>Is gaming now</p>
       ) : isButtonClicked && quiz.users.length < 2 ? (
         <>
-          <p>Users ready for quiz: {quiz.users.length}</p>
-          <div>Waiting for members to start quiz...</div>
+          <p className='quiz__subtitle'>
+            Users ready for quiz: <span className='quiz__text'>{quiz.users.length}</span>
+          </p>
+          <div className='quiz__waiting-container flex'>
+            <p className='quiz__subtitle quiz__waiting'>Waiting for members to start quiz...</p>
+            <div className='lds-hourglass'></div>
+          </div>
         </>
       ) : (
         <>
-          <p>Users ready for quiz: {quiz.users.length}</p>
+          <p className='quiz__subtitle'>
+            Users ready for quiz: <span className='quiz__text'>{quiz.users.length}</span>
+          </p>
           <button onClick={() => joinQuiz(quiz)} className='btn quiz__btn quiz__btn-start'>
             Join
           </button>

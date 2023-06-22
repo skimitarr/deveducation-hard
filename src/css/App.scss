@@ -5,7 +5,7 @@
 }
 
 .btn {
-  padding: 8px 20px;
+  padding: 10px 20px;
   border: none;
   border-radius: 10px;
   background-color: rgb(4, 109, 141);
@@ -42,9 +42,8 @@
 }
 
 .main {
-  height: calc(100vh - 100px);
+  background-color: #b3e7daf6;
   &__container {
-    // height: inherit;
     margin: 0 25px;
     padding: 25px 0;
     display: grid;
@@ -68,14 +67,15 @@
 
 .chat {
   flex-direction: column;
-  font-size: 20px;
+  font-size: 14px;
   &__list {
     max-height: calc(100vh - 100px - 240px);
     overflow: auto;
   }
   &__item {
     margin-bottom: 30px;
-    // height: 600px;
+    padding: 10px;
+    background-color: white;
   }
   &__photo {
     margin-bottom: 10px;
@@ -91,6 +91,8 @@
   &__text {
     margin-bottom: 20px;
     padding: 0 10px 0 0;
+    background-color: white;
+    font-size: 20px;
   }
   &__time {
     padding: 0 10px 0 0;
@@ -104,12 +106,12 @@
     margin-bottom: 10px;
     font-size: 16px;
     resize: none;
+    outline: none;
   }
 }
 
 .quiz {
   align-items: center;
-  // justify-content: center;
   flex-direction: column;
   &__add {
     margin-bottom: 30px;
@@ -133,19 +135,31 @@
     justify-content: center;
     margin-right: 30px;
     margin-bottom: 30px;
+    padding: 10px 20px;
     width: 300px;
-    height: 200px;
+    height: 250px;
     border: 1px solid black;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
   }
+  &__subtitle {
+    font-size: 14px;
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+  &__text {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  &__waiting {
+    margin-top: 12px;
+    color: rgb(12, 139, 61);
+    font-weight: bold;
+  }
+
   &__title {
     margin-bottom: 30px;
     font-size: 40px;
-  }
-  &__btn {
-    // width: 100%;
-    &-start {
-      // margin-bottom: 30px;
-    }
   }
   &__quest-container {
     flex-direction: column;
@@ -181,6 +195,19 @@
       background-color: chocolate;
     }
   }
+  &__finished-container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  &__subtitle-finished {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  &__text-finished {
+    font-size: 36px;
+    font-weight: bold;
+  }
 }
 
 .modal__container {
@@ -190,4 +217,36 @@
   background-color: black;
   opacity: 0.5;
   z-index: 1;
+}
+
+.lds-hourglass {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+.lds-hourglass:after {
+  content: ' ';
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 8px;
+  box-sizing: border-box;
+  border: 12px solid black;
+  border-color: rgb(12, 139, 61) transparent rgb(12, 139, 61) transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
 }

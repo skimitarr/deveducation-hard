@@ -17,6 +17,7 @@ const Quiz = ({ id, setIsQuiz }: QuizProps) => {
   const [counter, setCounter] = useState(0);
   const [score, setScore] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [youFinished, setYouFinished] = useState(false);
   const quizesApi = useSelector((state: IState) => state.quiz.quizes);
   const tempArr = quizesApi.filter((item) => item.id === id);
   const currentQuiz = tempArr[0];
@@ -50,11 +51,18 @@ const Quiz = ({ id, setIsQuiz }: QuizProps) => {
     }
   }, [score, dispatch, id]);
 
+  useEffect(() => {
+    if (currentQuiz.status === 'finished') {
+      setIsModalOpen(true);
+    }
+  }, [currentQuiz.status]);
+
   const handleClick = (currentAnswer: string): void => {
     if (counter < currentQuiz.questions.length - 1) {
       setCounter(counter + 1);
     } else {
       //тут то, что мы делаем после конца игры
+      setYouFinished(true);
       setIsModalOpen(true);
       dispatch(updateStatusQuizAction(currentQuiz.id, 'finished'));
       createQuiz();
@@ -104,9 +112,17 @@ const Quiz = ({ id, setIsQuiz }: QuizProps) => {
     });
     if (winner) {
       return (
-        <p>
-          Winner is {winner.displayName} with score {winner.score}
-        </p>
+        <>
+          {youFinished ? (
+            <p className='quiz__subtitle-finished'>You finished the quiz first</p>
+          ) : (
+            <p className='quiz__subtitle-finished'>Opponent finished the quiz first</p>
+          )}
+          <p className='quiz__subtitle-finished'>
+            Winner is <span className='quiz__text-finished'>{winner.displayName}</span> with score{' '}
+            <span className='quiz__text-finished'>{winner.score}</span>
+          </p>
+        </>
       );
     } else {
       return <p></p>;
@@ -114,46 +130,40 @@ const Quiz = ({ id, setIsQuiz }: QuizProps) => {
   };
 
   const renderQuiz = () => {
-    if (currentQuiz.status === 'started') {
-      return (
-        <>
-          <div className='quiz__question'>
-            <span>{currentQuiz.questions[counter]}</span>
-          </div>
-          {answers()}
-          <div className='quiz__results flex'>
-            {currentQuiz.users.map((user, index) => {
-              return (
-                <div key={index}>
-                  <p>name: {user.displayName}</p>
-                  <p>score: {user.score}</p>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      );
-    }
-    if (currentQuiz.status === 'finished') {
-      // setIsModalOpen(true);
-      return (
-        <>
-          <div>Your opponent has finished the quiz first</div>
-          {winner()}
-          <button onClick={() => setIsQuiz(false)}>Come back to quizes</button>
-        </>
-      );
-    }
+    return (
+      <div className='quiz__quest-container flex'>
+        <div className='quiz__question'>
+          <span>{currentQuiz.questions[counter]}</span>
+        </div>
+        {answers()}
+        <div className='quiz__results flex'>
+          {currentQuiz.users.map((user, index) => {
+            return (
+              <div key={index}>
+                <p>name: {user.displayName}</p>
+                <p>score: {user.score}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className='quiz__quest-container flex'>
+    <>
       {renderQuiz()}
 
-      <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={[]}>
+      <Modal centered open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={[]}>
         {winner()}
       </Modal>
-    </div>
+    </>
   );
 };
 export default Quiz;
+
+// header fixed
+// margin во все стороны
+// backdrop-filter: blur(10px);
+// для карточека бордер радиус
+// фон темным
